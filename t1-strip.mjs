@@ -210,16 +210,6 @@ const definition = {
         }),
 
         m.numeric({
-            name: "speed",
-            valueMin: 1,
-            valueMax: 100,
-            cluster: "manuSpecificLumi",
-            attribute: {ID: 0x0520, type: 0x20},
-            description: "Effect speed",
-            zigbeeCommandOptions: {manufacturerCode},
-        }),
-
-        m.numeric({
             name: "off_on_duration",
             label: "Off to On dimming duration",
             cluster: "genLevelCtrl",
@@ -287,7 +277,7 @@ const definition = {
 
         // RGB Effect Speed
         m.numeric({
-            name: "rgb_effect_speed",
+            name: "speed",
             cluster: "manuSpecificLumi",
             attribute: {ID: 0x0520, type: 0x20},
             description: "RGB dynamic effect speed (1-100%)",
@@ -336,11 +326,11 @@ const definition = {
             .withDescription("RGB dynamic effect brightness (1-100%)")
             .withCategory("config"),
 
-        // Segment activation control
+        // Segment activation control for dymanic effects
         exposes
             .text("active_segments", ea.SET)
             .withDescription(
-                "Comma-separated segment numbers to activate (e.g., '1,2,5,8'). Use 'all' for all segments. Controls which segments respond to presets and RGB effects",
+                "Comma-separated segment numbers to activate for dynamic effects (e.g., '1,2,5,8'). Leave empty or unset for all segments.",
             )
             .withCategory("config"),
     ],
