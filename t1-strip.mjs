@@ -489,9 +489,11 @@ const definition = {
                 const maxSegments = calculateSegmentCount(stripLength);
 
                 let segments;
-                if (value.toLowerCase() === "all") {
+                if (!value || value.trim() === "") {
+                    // Empty or unset: use all segments
                     segments = Array.from({length: maxSegments}, (_, i) => i + 1);
                 } else {
+                    // Parse comma-separated segment numbers
                     segments = value
                         .split(",")
                         .map((s) => Number.parseInt(s.trim(), 10))
