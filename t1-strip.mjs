@@ -149,28 +149,6 @@ const definition = {
             zigbeeCommandOptions: {manufacturerCode},
         }),
 
-        m.numeric({
-            name: "min_brightness",
-            valueMin: 0,
-            valueMax: 99,
-            unit: "%",
-            cluster: "manuSpecificLumi",
-            attribute: {ID: 0x0515, type: 0x20},
-            description: "Minimum brightness level",
-            zigbeeCommandOptions: {manufacturerCode},
-        }),
-
-        m.numeric({
-            name: "max_brightness",
-            valueMin: 1,
-            valueMax: 100,
-            unit: "%",
-            cluster: "manuSpecificLumi",
-            attribute: {ID: 0x0516, type: 0x20},
-            description: "Maximum brightness level",
-            zigbeeCommandOptions: {manufacturerCode},
-        }),
-
         m.binary({
             name: "audio",
             valueOn: ["ON", 1],
