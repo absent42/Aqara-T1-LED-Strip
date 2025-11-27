@@ -145,7 +145,7 @@ const definition = {
             unit: "m",
             cluster: "manuSpecificLumi",
             attribute: {ID: 0x051b, type: 0x20},
-            description: "LED strip length (5 segments per meter)",
+            description: "LED strip length (5 x 20cm segments per meter), used for segment control features",
             zigbeeCommandOptions: {manufacturerCode},
         }),
 
