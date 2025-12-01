@@ -121,10 +121,10 @@ const definition = {
 
     configure: async (device, coordinatorEndpoint) => {
         const endpoint = device.getEndpoint(1);
-        await endpoint.read("manuSpecificLumi", [0x0515], {manufacturerCode}); // dimming_range_minimum
-        await endpoint.read("manuSpecificLumi", [0x0516], {manufacturerCode}); // dimming_range_maximum
-        await endpoint.read("manuSpecificLumi", [0x051b], {manufacturerCode}); // strip length
-        await endpoint.read("manuSpecificLumi", [0x051e], {manufacturerCode}); // audio sensitivity
+        await endpoint.read("manuSpecificLumi", [0x0515], {manufacturerCode: manufacturerCode}); // dimming_range_minimum
+        await endpoint.read("manuSpecificLumi", [0x0516], {manufacturerCode: manufacturerCode}); // dimming_range_maximum
+        await endpoint.read("manuSpecificLumi", [0x051b], {manufacturerCode: manufacturerCode}); // strip length
+        await endpoint.read("manuSpecificLumi", [0x051e], {manufacturerCode: manufacturerCode}); // audio sensitivity
         await endpoint.read("genLevelCtrl", [0x0012], {}); // off_on_duration
         await endpoint.read("genLevelCtrl", [0x0013], {}); // on_off_duration
     },
