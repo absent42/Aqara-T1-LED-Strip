@@ -123,6 +123,7 @@ const definition = {
         const endpoint = device.getEndpoint(1);
         await endpoint.read("manuSpecificLumi", [0x0515], {manufacturerCode: manufacturerCode}); // dimming_range_minimum
         await endpoint.read("manuSpecificLumi", [0x0516], {manufacturerCode: manufacturerCode}); // dimming_range_maximum
+        await endpoint.read("manuSpecificLumi", [0x0517], {manufacturerCode: manufacturerCode}); // power_on_behaviour
         await endpoint.read("manuSpecificLumi", [0x051b], {manufacturerCode: manufacturerCode}); // strip length
         await endpoint.read("manuSpecificLumi", [0x051e], {manufacturerCode: manufacturerCode}); // audio sensitivity
         await endpoint.read("genLevelCtrl", [0x0012], {}); // off_on_duration
@@ -136,8 +137,8 @@ const definition = {
             colorTemp: {startup: false, range: [153, 370]},
             color: true,
         }),
-        lumiModernExtend.lumiPowerOnBehavior(),
         m.forcePowerSource({powerSource: "Mains (single phase)"}),
+        lumiModernExtend.lumiPowerOnBehavior({lookup: {on: 0, off: 1, restore: 2}}),
         lumiModernExtend.lumiZigbeeOTA(),
 
         lumiModernExtend.lumiDimmingRangeMin(),
@@ -186,16 +187,6 @@ const definition = {
             zigbeeCommandOptions: {manufacturerCode},
         }),
 
-        m.numeric({
-            name: "preset",
-            valueMin: 1,
-            valueMax: 32,
-            cluster: "manuSpecificLumi",
-            attribute: {ID: 0x051f, type: 0x23},
-            description: "Preset index (0-6 default presets, 7-32 custom)",
-            zigbeeCommandOptions: {manufacturerCode},
-        }),
-
         // RGB Effect Type - T1 Strip specific mappings
         m.enumLookup({
             name: "rgb_effect",
@@ -208,7 +199,7 @@ const definition = {
 
         // RGB Effect Speed
         m.numeric({
-            name: "speed",
+            name: "rgb_effect_speed",
             cluster: "manuSpecificLumi",
             attribute: {ID: 0x0520, type: 0x20},
             description: "RGB dynamic effect speed (1-100%)",
@@ -259,7 +250,7 @@ const definition = {
 
         // Segment activation control for dymanic effects
         exposes
-            .text("active_segments", ea.SET)
+            .text("rgb_effect_segments", ea.SET)
             .withDescription(
                 "Comma-separated segment numbers to activate for dynamic effects (e.g., '1,2,5,8'). Leave empty or unset for all segments.",
             )
@@ -404,7 +395,7 @@ const definition = {
             },
         },
         {
-            key: ["active_segments"],
+            key: ["rgb_effect_segments"],
             convertSet: async (entity, key, value, meta) => {
                 const stripLength = meta.state.length || 2;
                 const maxSegments = calculateSegmentCount(stripLength);
@@ -429,7 +420,7 @@ const definition = {
 
                 await entity.write("manuSpecificLumi", {[0x0530]: {value: mask, type: 0x41}}, {manufacturerCode, disableDefaultResponse: false});
 
-                return {state: {active_segments: value}};
+                return {state: {rgb_effect_segments: value}};
             },
         },
     ],
