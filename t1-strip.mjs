@@ -138,7 +138,7 @@ const definition = {
             color: true,
         }),
         m.forcePowerSource({powerSource: "Mains (single phase)"}),
-        lumiModernExtend.lumiPowerOnBehavior({lookup: {on: 0, off: 1, restore: 2}}),
+        lumiModernExtend.lumiPowerOnBehavior({lookup: {on: 0, previous: 1, off: 2}}),
         lumiModernExtend.lumiZigbeeOTA(),
 
         lumiModernExtend.lumiDimmingRangeMin(),
