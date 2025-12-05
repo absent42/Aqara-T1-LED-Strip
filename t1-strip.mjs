@@ -39,9 +39,9 @@ function encodeColor(hexColor) {
         throw new Error(`Invalid color format: ${hexColor}. Use format #RRGGBB (e.g., #FF0000)`);
     }
 
-    const r = Number.parseInt(normalized.substr(0, 2), 16);
-    const g = Number.parseInt(normalized.substr(2, 2), 16);
-    const b = Number.parseInt(normalized.substr(4, 2), 16);
+    const r = Number.parseInt(normalized.substring(0, 2), 16);
+    const g = Number.parseInt(normalized.substring(2, 4), 16);
+    const b = Number.parseInt(normalized.substring(4, 6), 16);
 
     // Convert RGB to XY
     const xy = rgbToXY(r, g, b);
@@ -59,28 +59,32 @@ function encodeColor(hexColor) {
     ];
 }
 
-function getStateKey(meta) {
-    // Check if device has multiple endpoints
-    // This works for T1M which has endpoints: {white: 1, rgb: 2}
-    // T1 Strip has single endpoint, so this returns 'state'
-    const rgbEndpoint = meta.device.getEndpoint(2);
-    if (rgbEndpoint) {
-        const endpoints = meta.device.endpoints;
-        if (endpoints && endpoints.length > 1) {
-            // Multi-endpoint device, use state_rgb
-            return "state_rgb";
-        }
-    }
-    return "state";
+// ============================================================================
+// UNIFIED SEGMENT CONTROL HELPERS (works for both T1M and T1 Strip)
+// ============================================================================
+
+/**
+ * Detect device type from model ID
+ * @param {object} meta - Zigbee2MQTT meta object
+ * @returns {string} "t1m" or "strip"
+ */
+function getDeviceType(meta) {
+    const model = meta.device.modelID;
+    // T1M: lumi.light.acn032, lumi.light.acn031
+    // T1 Strip: lumi.light.acn132
+    return model === "lumi.light.acn132" ? "strip" : "t1m";
 }
 
-// T1 STRIP SPECIFIC: SEGMENT CONTROL
-function calculateSegmentCount(lengthMeters) {
-    return Math.round(lengthMeters * 5);
-}
-
-function generateSegmentMask(segments, maxSegments) {
-    const mask = [0, 0, 0, 0, 0, 0, 0, 0];
+/**
+ * Generate segment bitmask for specified segments
+ * @param {number[]} segments - Array of segment numbers (1-based)
+ * @param {string} deviceType - "t1m" or "strip"
+ * @param {number} maxSegments - Maximum valid segment number
+ * @returns {number[]} Bitmask array (4 bytes for T1M, 8 bytes for strip)
+ */
+function generateSegmentMask(segments, deviceType, maxSegments) {
+    const maskSize = deviceType === "t1m" ? 4 : 8;
+    const mask = new Array(maskSize).fill(0);
 
     for (const seg of segments) {
         if (seg < 1 || seg > maxSegments) {
@@ -97,13 +101,31 @@ function generateSegmentMask(segments, maxSegments) {
     return mask;
 }
 
-// Build packet for T1 Strip segment control
-function buildSegmentPacket(segments, hexColor, brightness, maxSegments) {
-    const segmentMask = generateSegmentMask(segments, maxSegments);
+/**
+ * Build segment control packet
+ * @param {number[]} segments - Array of segment numbers (1-based)
+ * @param {string} hexColor - Hex color string (e.g., "#FF0000")
+ * @param {number} brightness - Brightness value (0-255)
+ * @param {string} deviceType - "t1m" or "strip"
+ * @param {number} maxSegments - Maximum valid segment number
+ * @returns {number[]} Packet bytes
+ */
+function buildSegmentPacket(segments, hexColor, brightness, deviceType, maxSegments) {
+    const segmentMask = generateSegmentMask(segments, deviceType, maxSegments);
     const colorBytes = encodeColor(hexColor);
     const brightnessByte = Math.max(0, Math.min(255, Math.round(brightness)));
 
-    // Packet structure for static segment colors:
+    if (deviceType === "t1m") {
+        // T1M packet structure:
+        // [0-3]:   Fixed header (01:01:01:0f)
+        // [4]:     Brightness (0-255)
+        // [5-8]:   Segment bitmask (4 bytes)
+        // [9-12]:  Reserved (00:00:00:00)
+        // [13-16]: Color (XY, 4 bytes)
+        // [17-18]: Footer (02:bc)
+        return [0x01, 0x01, 0x01, 0x0f, brightnessByte, ...segmentMask, 0x00, 0x00, 0x00, 0x00, ...colorBytes, 0x02, 0xbc];
+    }
+    // T1 Strip packet structure:
     // [0-3]:   Fixed header (01:01:01:0f)
     // [4]:     Brightness (0-255)
     // [5-12]:  Segment bitmask (8 bytes)
@@ -111,6 +133,10 @@ function buildSegmentPacket(segments, hexColor, brightness, maxSegments) {
     // [17-18]: Footer (00:14)
     return [0x01, 0x01, 0x01, 0x0f, brightnessByte, ...segmentMask, ...colorBytes, 0x00, 0x14];
 }
+
+// ============================================================================
+// END UNIFIED SEGMENT CONTROL HELPERS
+// ============================================================================
 
 const definition = {
     zigbeeModel: ["lumi.light.acn132"],
@@ -248,7 +274,7 @@ const definition = {
             .withDescription("RGB dynamic effect brightness (1-100%)")
             .withCategory("config"),
 
-        // Segment activation control for dymanic effects
+        // Segment activation control for dynamic effects
         exposes
             .text("rgb_effect_segments", ea.SET)
             .withDescription(
@@ -274,8 +300,9 @@ const definition = {
                     throw new Error("segment_colors must be a non-empty array");
                 }
 
-                const stripLength = meta.state.length || 2;
-                const maxSegments = calculateSegmentCount(stripLength);
+                // Detect device type and determine max segments
+                const deviceType = getDeviceType(meta);
+                const maxSegments = deviceType === "t1m" ? 26 : Math.round((meta.state.length || 2) * 5);
 
                 // Brightness from state or use default (100%)
                 const brightnessPercent = meta.state.segment_brightness !== undefined ? meta.state.segment_brightness : 100;
@@ -283,17 +310,13 @@ const definition = {
                 // Convert percentage (1-100) to hardware value (0-255)
                 const brightness = Math.round((brightnessPercent / 100) * 255);
 
-                // Turn on light if off
-                if (meta.state.state === "OFF") {
-                    await entity.command("genOnOff", "on", {}, {});
-                    await new Promise((resolve) => setTimeout(resolve, 100));
-                }
-
-                // Group segments by color for efficiency
+                // Group segments by color
                 const colorGroups = {};
+                const specifiedSegments = new Set();
+
                 for (const item of value) {
                     if (!item.segment || !item.color) {
-                        throw new Error('Each segment must have "segment" and "color" fields');
+                        throw new Error(`Each segment must have "segment" (1-${maxSegments}) and "color" (#RRGGBB) fields`);
                     }
 
                     const segment = item.segment;
@@ -310,6 +333,26 @@ const definition = {
                         };
                     }
                     colorGroups[color].segments.push(segment);
+                    specifiedSegments.add(segment);
+                }
+
+                // Turn off unspecified segments by setting to black (#000000)
+                const unspecifiedSegments = [];
+                for (let seg = 1; seg <= maxSegments; seg++) {
+                    if (!specifiedSegments.has(seg)) {
+                        unspecifiedSegments.push(seg);
+                    }
+                }
+
+                if (unspecifiedSegments.length > 0) {
+                    if (!colorGroups["#000000"]) {
+                        colorGroups["#000000"] = {
+                            color: "#000000",
+                            segments: unspecifiedSegments,
+                        };
+                    } else {
+                        colorGroups["#000000"].segments.push(...unspecifiedSegments);
+                    }
                 }
 
                 // Send one packet per color group
@@ -318,7 +361,7 @@ const definition = {
 
                 for (let i = 0; i < groups.length; i++) {
                     const group = groups[i];
-                    const packet = buildSegmentPacket(group.segments, group.color, brightness, maxSegments);
+                    const packet = buildSegmentPacket(group.segments, group.color, brightness, deviceType, maxSegments);
 
                     await entity.write(
                         "manuSpecificLumi",
@@ -331,8 +374,8 @@ const definition = {
                     }
                 }
 
-                // Determine correct state key based on device endpoint configuration
-                const stateKey = getStateKey(meta);
+                // Determine correct state key based on device type
+                const stateKey = deviceType === "t1m" ? "state_rgb" : "state";
 
                 return {state: {segment_colors: value, [stateKey]: "ON"}};
             },
@@ -356,8 +399,8 @@ const definition = {
                     throw new Error("Brightness must be between 1 and 100%");
                 }
 
-                // Convert brightness percentage to 8-bit value (0-254)
-                const brightness8bit = Math.round((brightnessPercent / 100) * 254);
+                // Convert brightness percentage to 8-bit value (0-255)
+                const brightness8bit = Math.round((brightnessPercent / 100) * 255);
 
                 // Encode all colors for the color message
                 const colorBytes = [];
@@ -372,9 +415,6 @@ const definition = {
 
                 const ATTR_RGB_COLORS = 0x0527;
 
-                // Turn on the light first
-                await entity.command("genOnOff", "on", {}, {});
-
                 // Send colors to 0x0527
                 await entity.write(
                     "manuSpecificLumi",
@@ -382,8 +422,9 @@ const definition = {
                     {manufacturerCode, disableDefaultResponse: false},
                 );
 
-                // Determine correct state key based on device endpoint configuration
-                const stateKey = getStateKey(meta);
+                // Determine correct state key based on device type
+                const deviceType = getDeviceType(meta);
+                const stateKey = deviceType === "t1m" ? "state_rgb" : "state";
 
                 return {
                     state: {
@@ -397,8 +438,9 @@ const definition = {
         {
             key: ["rgb_effect_segments"],
             convertSet: async (entity, key, value, meta) => {
-                const stripLength = meta.state.length || 2;
-                const maxSegments = calculateSegmentCount(stripLength);
+                // Detect device type and determine max segments
+                const deviceType = getDeviceType(meta);
+                const maxSegments = deviceType === "t1m" ? 26 : Math.round((meta.state.length || 2) * 5);
 
                 let segments;
                 if (!value || value.trim() === "") {
@@ -416,7 +458,7 @@ const definition = {
                     }
                 }
 
-                const mask = Buffer.from(generateSegmentMask(segments, maxSegments));
+                const mask = Buffer.from(generateSegmentMask(segments, deviceType, maxSegments));
 
                 await entity.write("manuSpecificLumi", {[0x0530]: {value: mask, type: 0x41}}, {manufacturerCode, disableDefaultResponse: false});
 
