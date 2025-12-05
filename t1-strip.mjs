@@ -157,11 +157,10 @@ const definition = {
     },
 
     extend: [
-        m.light({
-            effect: false,
-            powerOnBehavior: false,
-            colorTemp: {startup: false, range: [153, 370]},
-            color: true,
+        lumiModernExtend.lumiLight({
+            colorTemp: true,
+            color: {modes: ["xy"]},
+            colorTempRange: [153, 370],
         }),
         m.forcePowerSource({powerSource: "Mains (single phase)"}),
         lumiModernExtend.lumiPowerOnBehavior({lookup: {on: 0, previous: 1, off: 2}}),
