@@ -29,6 +29,36 @@ If an external converter is active for a device a cyan icon with "Supported: ext
 ## Home Assistant
 The Home Assistant folder contains a collection of blueprints, scripts, cards and examples to control the T1 LED Strip light with color segmentations and dynamic effects.
 
+## Segment Color Patterns
+### aqara_t1_strip_segments_blueprint.yaml
+Home Assistant script blueprint to control the RGB ring light segments.
+
+#### 1. Import the Blueprint
+1. In Home Assistant, go to **Settings** → **Automations & Scenes** → **Blueprints**
+2. Click the **Import Blueprint** button
+3. Paste the URL to this blueprint file or upload it directly
+4. Click **Preview** and then **Import**
+
+#### 2. Create a Script from the Blueprint
+1. Go to **Settings** → **Automations & Scenes** → **Scripts**
+2. Click **Add Script** → **Create new script from blueprint**
+3. Select **Aqara T1 - RGB Ring Segments Script**
+4. Configure the script:
+   - **Name**: Give it a descriptive name (e.g., "T1M Custom Ring Pattern")
+   - **Target Lights**: Select one or more T1 LED Strip target enitities/devices, (e.g., light.my_led_strip)
+   - **Zigbee2MQTT Base Topic**: Only needs to be changed if you have a non-standard Zigbee2MQTT installation
+   - **Strip Length**: The length of the LED strip in 20cm increments
+   - **Color Pickers**: Configure each of the segment colors up to the length of the strip. #000000 (black) turns off a segment.
+5. Save the script
+
+#### 3. Running a created script
+Once created, you can run a script in several ways:
+
+1. **Manually**: Go to **Settings** → **Automations & Scenes** → **Scripts** and run it
+2. **Dashboard Button**: Add a script button to your dashboard
+3. **Automation**: Trigger it from an automation
+
+
 ## Dynamic Effect Patterns
 
 ### aqara_t1_strip_rgb_effects_blueprint.yaml
