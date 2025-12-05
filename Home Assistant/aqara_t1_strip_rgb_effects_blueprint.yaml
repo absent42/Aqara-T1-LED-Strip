@@ -4,7 +4,7 @@
 ## Install to blueprints/script/aqara/aqara_t1_strip_rgb_effects_blueprint.yaml
 
 blueprint:
-  name: Aqara T1 Strip - RGB Dynamic Effect Script
+  name: Aqara T1 LED Strip - RGB Dynamic Effect Script
   description: >
     Script blueprint to send dynamic RGB effect payloads to Aqara T1 LED Strip via
     Zigbee2MQTT, using up to 8 RGB color pickers. Supports multiple strips and
