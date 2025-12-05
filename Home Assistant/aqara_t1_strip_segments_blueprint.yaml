@@ -1,0 +1,521 @@
+## Aqara T1 LED Strip Segments
+## Home Assistant script blueprint
+##
+## Install to blueprints/script/aqara/aqara_t1_strip_segments_blueprint.yaml
+
+blueprint:
+  name: Aqara T1 LED Strip - Segment Colors Script
+  description: >
+    Script blueprint to control individual segments on the Aqara T1 LED Strip with custom colors. 
+    Each segment can be set to any color using a color picker. Set the color to black (000) to turn off a segment.
+    Supports strips from 2m (10 segments) up to 10m (50 segments). Only configured segments up to strip length are sent.
+    Supports multiple lights.
+  domain: script
+  input:
+    target_lights:
+      name: Target Lights
+      description: >
+        Select one or more T1 LED Strip lights or devices.
+      selector:
+        target:
+          entity:
+            - domain: light
+
+    z2m_base_topic:
+      name: Zigbee2MQTT Base Topic
+      description: The base MQTT topic for your Zigbee2MQTT instance
+      default: "zigbee2mqtt"
+      selector:
+        text:
+    
+    strip_length:
+      name: Strip Length (meters)
+      description: The length of your LED strip in meters (2-10). Only segments up to this length will be sent.
+      default: 2
+      selector:
+        number:
+          min: 2
+          max: 10
+          step: 0.2
+          mode: slider
+    
+    # Segments 1-10 (Meters 1-2) - Always visible
+    color_01:
+      name: Segment 1 Color
+      description: Color for segment 1
+      default: [255, 0, 0]
+      selector:
+        color_rgb:
+    
+    color_02:
+      name: Segment 2 Color
+      description: Color for segment 2
+      default: [255, 127, 0]
+      selector:
+        color_rgb:
+    
+    color_03:
+      name: Segment 3 Color
+      description: Color for segment 3
+      default: [255, 255, 0]
+      selector:
+        color_rgb:
+    
+    color_04:
+      name: Segment 4 Color
+      description: Color for segment 4
+      default: [0, 255, 0]
+      selector:
+        color_rgb:
+    
+    color_05:
+      name: Segment 5 Color
+      description: Color for segment 5
+      default: [0, 255, 127]
+      selector:
+        color_rgb:
+    
+    color_06:
+      name: Segment 6 Color
+      description: Color for segment 6
+      default: [0, 255, 255]
+      selector:
+        color_rgb:
+    
+    color_07:
+      name: Segment 7 Color
+      description: Color for segment 7
+      default: [0, 127, 255]
+      selector:
+        color_rgb:
+    
+    color_08:
+      name: Segment 8 Color
+      description: Color for segment 8
+      default: [0, 0, 255]
+      selector:
+        color_rgb:
+    
+    color_09:
+      name: Segment 9 Color
+      description: Color for segment 9
+      default: [127, 0, 255]
+      selector:
+        color_rgb:
+    
+    color_10:
+      name: Segment 10 Color
+      description: Color for segment 10
+      default: [255, 0, 255]
+      selector:
+        color_rgb:
+    
+    # Segments 11-15 (Meter 3)
+    color_11:
+      name: Segment 11 Color
+      description: Color for segment 11
+      default: [255, 0, 0]
+      selector:
+        color_rgb:
+    
+    color_12:
+      name: Segment 12 Color
+      description: Color for segment 12
+      default: [255, 127, 0]
+      selector:
+        color_rgb:
+    
+    color_13:
+      name: Segment 13 Color
+      description: Color for segment 13
+      default: [255, 255, 0]
+      selector:
+        color_rgb:
+    
+    color_14:
+      name: Segment 14 Color
+      description: Color for segment 14
+      default: [0, 255, 0]
+      selector:
+        color_rgb:
+    
+    color_15:
+      name: Segment 15 Color
+      description: Color for segment 15
+      default: [0, 255, 127]
+      selector:
+        color_rgb:
+    
+    # Segments 16-20 (Meter 4) - Collapsible
+    color_16:
+      name: Segment 16 Color
+      description: Color for segment 16
+      default: [0, 255, 255]
+      selector:
+        color_rgb:
+    
+    color_17:
+      name: Segment 17 Color
+      description: Color for segment 17
+      default: [0, 127, 255]
+      selector:
+        color_rgb:
+    
+    color_18:
+      name: Segment 18 Color
+      description: Color for segment 18
+      default: [0, 0, 255]
+      selector:
+        color_rgb:
+    
+    color_19:
+      name: Segment 19 Color
+      description: Color for segment 19
+      default: [127, 0, 255]
+      selector:
+        color_rgb:
+    
+    color_20:
+      name: Segment 20 Color
+      description: Color for segment 20
+      default: [255, 0, 255]
+      selector:
+        color_rgb:
+    
+    # Segments 21-25 (Meter 5) - Collapsible
+    color_21:
+      name: Segment 21 Color
+      description: Color for segment 21
+      default: [255, 0, 0]
+      selector:
+        color_rgb:
+    
+    color_22:
+      name: Segment 22 Color
+      description: Color for segment 22
+      default: [255, 127, 0]
+      selector:
+        color_rgb:
+    
+    color_23:
+      name: Segment 23 Color
+      description: Color for segment 23
+      default: [255, 255, 0]
+      selector:
+        color_rgb:
+    
+    color_24:
+      name: Segment 24 Color
+      description: Color for segment 24
+      default: [0, 255, 0]
+      selector:
+        color_rgb:
+    
+    color_25:
+      name: Segment 25 Color
+      description: Color for segment 25
+      default: [0, 255, 127]
+      selector:
+        color_rgb:
+    
+    # Segments 26-30 (Meter 6) - Collapsible
+    color_26:
+      name: Segment 26 Color
+      description: Color for segment 26
+      default: [0, 255, 255]
+      selector:
+        color_rgb:
+    
+    color_27:
+      name: Segment 27 Color
+      description: Color for segment 27
+      default: [0, 127, 255]
+      selector:
+        color_rgb:
+    
+    color_28:
+      name: Segment 28 Color
+      description: Color for segment 28
+      default: [0, 0, 255]
+      selector:
+        color_rgb:
+    
+    color_29:
+      name: Segment 29 Color
+      description: Color for segment 29
+      default: [127, 0, 255]
+      selector:
+        color_rgb:
+    
+    color_30:
+      name: Segment 30 Color
+      description: Color for segment 30
+      default: [255, 0, 255]
+      selector:
+        color_rgb:
+    
+    # Segments 31-35 (Meter 7) - Collapsible
+    color_31:
+      name: Segment 31 Color
+      description: Color for segment 31
+      default: [255, 0, 0]
+      selector:
+        color_rgb:
+    
+    color_32:
+      name: Segment 32 Color
+      description: Color for segment 32
+      default: [255, 127, 0]
+      selector:
+        color_rgb:
+    
+    color_33:
+      name: Segment 33 Color
+      description: Color for segment 33
+      default: [255, 255, 0]
+      selector:
+        color_rgb:
+    
+    color_34:
+      name: Segment 34 Color
+      description: Color for segment 34
+      default: [0, 255, 0]
+      selector:
+        color_rgb:
+    
+    color_35:
+      name: Segment 35 Color
+      description: Color for segment 35
+      default: [0, 255, 127]
+      selector:
+        color_rgb:
+    
+    # Segments 36-40 (Meter 8) - Collapsible
+    color_36:
+      name: Segment 36 Color
+      description: Color for segment 36
+      default: [0, 255, 255]
+      selector:
+        color_rgb:
+    
+    color_37:
+      name: Segment 37 Color
+      description: Color for segment 37
+      default: [0, 127, 255]
+      selector:
+        color_rgb:
+    
+    color_38:
+      name: Segment 38 Color
+      description: Color for segment 38
+      default: [0, 0, 255]
+      selector:
+        color_rgb:
+    
+    color_39:
+      name: Segment 39 Color
+      description: Color for segment 39
+      default: [127, 0, 255]
+      selector:
+        color_rgb:
+    
+    color_40:
+      name: Segment 40 Color
+      description: Color for segment 40
+      default: [255, 0, 255]
+      selector:
+        color_rgb:
+    
+    # Segments 41-45 (Meter 9) - Collapsible
+    color_41:
+      name: Segment 41 Color
+      description: Color for segment 41
+      default: [255, 0, 0]
+      selector:
+        color_rgb:
+    
+    color_42:
+      name: Segment 42 Color
+      description: Color for segment 42
+      default: [255, 127, 0]
+      selector:
+        color_rgb:
+    
+    color_43:
+      name: Segment 43 Color
+      description: Color for segment 43
+      default: [255, 255, 0]
+      selector:
+        color_rgb:
+    
+    color_44:
+      name: Segment 44 Color
+      description: Color for segment 44
+      default: [0, 255, 0]
+      selector:
+        color_rgb:
+    
+    color_45:
+      name: Segment 45 Color
+      description: Color for segment 45
+      default: [0, 255, 127]
+      selector:
+        color_rgb:
+    
+    # Segments 46-50 (Meter 10) - Collapsible
+    color_46:
+      name: Segment 46 Color
+      description: Color for segment 46
+      default: [0, 255, 255]
+      selector:
+        color_rgb:
+    
+    color_47:
+      name: Segment 47 Color
+      description: Color for segment 47
+      default: [0, 127, 255]
+      selector:
+        color_rgb:
+    
+    color_48:
+      name: Segment 48 Color
+      description: Color for segment 48
+      default: [0, 0, 255]
+      selector:
+        color_rgb:
+    
+    color_49:
+      name: Segment 49 Color
+      description: Color for segment 49
+      default: [127, 0, 255]
+      selector:
+        color_rgb:
+    
+    color_50:
+      name: Segment 50 Color
+      description: Color for segment 50
+      default: [255, 0, 255]
+      selector:
+        color_rgb:
+
+sequence:
+  - variables:
+      z2m_base_topic: !input z2m_base_topic
+      target_lights: !input target_lights
+      strip_length: !input strip_length
+      c01: !input color_01
+      c02: !input color_02
+      c03: !input color_03
+      c04: !input color_04
+      c05: !input color_05
+      c06: !input color_06
+      c07: !input color_07
+      c08: !input color_08
+      c09: !input color_09
+      c10: !input color_10
+      c11: !input color_11
+      c12: !input color_12
+      c13: !input color_13
+      c14: !input color_14
+      c15: !input color_15
+      c16: !input color_16
+      c17: !input color_17
+      c18: !input color_18
+      c19: !input color_19
+      c20: !input color_20
+      c21: !input color_21
+      c22: !input color_22
+      c23: !input color_23
+      c24: !input color_24
+      c25: !input color_25
+      c26: !input color_26
+      c27: !input color_27
+      c28: !input color_28
+      c29: !input color_29
+      c30: !input color_30
+      c31: !input color_31
+      c32: !input color_32
+      c33: !input color_33
+      c34: !input color_34
+      c35: !input color_35
+      c36: !input color_36
+      c37: !input color_37
+      c38: !input color_38
+      c39: !input color_39
+      c40: !input color_40
+      c41: !input color_41
+      c42: !input color_42
+      c43: !input color_43
+      c44: !input color_44
+      c45: !input color_45
+      c46: !input color_46
+      c47: !input color_47
+      c48: !input color_48
+      c49: !input color_49
+      c50: !input color_50
+  
+  - variables:
+      # Calculate number of segments based on strip length
+      segment_count: "{{ (strip_length | float * 5) | int }}"
+      # Array of all colors
+      all_colors: >
+        {{ [c01, c02, c03, c04, c05, c06, c07, c08, c09, c10,
+            c11, c12, c13, c14, c15, c16, c17, c18, c19, c20,
+            c21, c22, c23, c24, c25, c26, c27, c28, c29, c30,
+            c31, c32, c33, c34, c35, c36, c37, c38, c39, c40,
+            c41, c42, c43, c44, c45, c46, c47, c48, c49, c50] }}
+  
+  - repeat:
+      for_each: >
+        {% set ns = namespace(lights=[]) %}
+        {% if target_lights.entity_id is defined %}
+          {% if target_lights.entity_id is string %}
+            {% set ns.lights = [target_lights.entity_id] %}
+          {% else %}
+            {% set ns.lights = target_lights.entity_id %}
+          {% endif %}
+        {% endif %}
+        {% if target_lights.device_id is defined %}
+          {% if target_lights.device_id is string %}
+            {% set device_entities = device_entities(target_lights.device_id) | select('match', '^light\.') | list %}
+            {% set ns.lights = ns.lights + device_entities %}
+          {% else %}
+            {% for device_id in target_lights.device_id %}
+              {% set device_entities = device_entities(device_id) | select('match', '^light\.') | list %}
+              {% set ns.lights = ns.lights + device_entities %}
+            {% endfor %}
+          {% endif %}
+        {% endif %}
+        {% if target_lights.area_id is defined %}
+          {% if target_lights.area_id is string %}
+            {% set area_entities = area_entities(target_lights.area_id) | select('match', '^light\.') | list %}
+            {% set ns.lights = ns.lights + area_entities %}
+          {% else %}
+            {% for area_id in target_lights.area_id %}
+              {% set area_entities = area_entities(area_id) | select('match', '^light\.') | list %}
+              {% set ns.lights = ns.lights + area_entities %}
+            {% endfor %}
+          {% endif %}
+        {% endif %}
+        {{ ns.lights | unique | list }}
+      sequence:
+        - variables:
+            entity_device_id: "{{ device_id(repeat.item) }}"
+            z2m_device_name: "{{ device_attr(entity_device_id, 'name') }}"
+        
+        - alias: "Set T1 Strip segment colors"
+          service: mqtt.publish
+          data:
+            topic: "{{ z2m_base_topic }}/{{ z2m_device_name }}/set"
+            payload: >
+              {
+                "segment_colors": [
+                  {%- for i in range(segment_count | int) -%}
+                    {%- set color = all_colors[i] -%}
+                    {"segment": {{ i + 1 }}, "color": "#{{ '%02x%02x%02x' | format(color[0], color[1], color[2]) }}"}
+                    {%- if not loop.last -%},{%- endif -%}
+                  {%- endfor -%}
+                ]
+              }
+
+mode: single
