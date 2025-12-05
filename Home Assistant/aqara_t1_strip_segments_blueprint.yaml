@@ -42,70 +42,70 @@ blueprint:
     # Segments 1-10 (Meters 1-2) - Always visible
     color_01:
       name: Segment 1 Color
-      description: Color for segment 1
+      description: Segment 1 (0.0-0.2m)
       default: [255, 0, 0]
       selector:
         color_rgb:
     
     color_02:
       name: Segment 2 Color
-      description: Color for segment 2
+      description: Segment 2 (0.2-0.4m)
       default: [255, 127, 0]
       selector:
         color_rgb:
     
     color_03:
       name: Segment 3 Color
-      description: Color for segment 3
+      description: Segment 3 (0.4-0.6m)
       default: [255, 255, 0]
       selector:
         color_rgb:
     
     color_04:
       name: Segment 4 Color
-      description: Color for segment 4
+      description: Segment 4 (0.6-0.8m)
       default: [0, 255, 0]
       selector:
         color_rgb:
     
     color_05:
       name: Segment 5 Color
-      description: Color for segment 5
+      description: Segment 5 (0.8-1.0m)
       default: [0, 255, 127]
       selector:
         color_rgb:
     
     color_06:
       name: Segment 6 Color
-      description: Color for segment 6
+      description: Segment 6 (1.0-1.2m)
       default: [0, 255, 255]
       selector:
         color_rgb:
     
     color_07:
       name: Segment 7 Color
-      description: Color for segment 7
+      description: Segment 7 (1.2-1.4m)
       default: [0, 127, 255]
       selector:
         color_rgb:
     
     color_08:
       name: Segment 8 Color
-      description: Color for segment 8
+      description: Segment 8 (1.4-1.6m)
       default: [0, 0, 255]
       selector:
         color_rgb:
     
     color_09:
       name: Segment 9 Color
-      description: Color for segment 9
+      description: Segment 9 (1.6-1.8m)
       default: [127, 0, 255]
       selector:
         color_rgb:
     
     color_10:
       name: Segment 10 Color
-      description: Color for segment 10
+      description: Segment 10 (1.8-2.0m)
       default: [255, 0, 255]
       selector:
         color_rgb:
@@ -113,287 +113,287 @@ blueprint:
     # Segments 11-15 (Meter 3)
     color_11:
       name: Segment 11 Color
-      description: Color for segment 11
+      description: Segment 11 (2.0-2.2m)
       default: [255, 0, 0]
       selector:
         color_rgb:
     
     color_12:
       name: Segment 12 Color
-      description: Color for segment 12
+      description: Segment 12 (2.2-2.4m)
       default: [255, 127, 0]
       selector:
         color_rgb:
     
     color_13:
       name: Segment 13 Color
-      description: Color for segment 13
+      description: Segment 13 (2.4-2.6m)
       default: [255, 255, 0]
       selector:
         color_rgb:
     
     color_14:
       name: Segment 14 Color
-      description: Color for segment 14
+      description: Segment 14 (2.6-2.8m)
       default: [0, 255, 0]
       selector:
         color_rgb:
     
     color_15:
       name: Segment 15 Color
-      description: Color for segment 15
+      description: Segment 15 (2.8-3.0m)
       default: [0, 255, 127]
       selector:
         color_rgb:
     
-    # Segments 16-20 (Meter 4) - Collapsible
+    # Segments 16-20 (Meter 4) 
     color_16:
       name: Segment 16 Color
-      description: Color for segment 16
+      description: Segment 16 (3.0-3.2m)
       default: [0, 255, 255]
       selector:
         color_rgb:
     
     color_17:
       name: Segment 17 Color
-      description: Color for segment 17
+      description: Segment 17 (3.2-3.4m)
       default: [0, 127, 255]
       selector:
         color_rgb:
     
     color_18:
       name: Segment 18 Color
-      description: Color for segment 18
+      description: Segment 18 (3.4-3.6m)
       default: [0, 0, 255]
       selector:
         color_rgb:
     
     color_19:
       name: Segment 19 Color
-      description: Color for segment 19
+      description: Segment 19 (3.6-3.8m)
       default: [127, 0, 255]
       selector:
         color_rgb:
     
     color_20:
       name: Segment 20 Color
-      description: Color for segment 20
+      description: Segment 20 (3.8-4.0m)
       default: [255, 0, 255]
       selector:
         color_rgb:
     
-    # Segments 21-25 (Meter 5) - Collapsible
+    # Segments 21-25 (Meter 5) 
     color_21:
       name: Segment 21 Color
-      description: Color for segment 21
+      description: Segment 21 (4.0-4.2m)
       default: [255, 0, 0]
       selector:
         color_rgb:
     
     color_22:
       name: Segment 22 Color
-      description: Color for segment 22
+      description: Segment 22 (4.2-4.4m)
       default: [255, 127, 0]
       selector:
         color_rgb:
     
     color_23:
       name: Segment 23 Color
-      description: Color for segment 23
+      description: Segment 23 (4.4-4.6m)
       default: [255, 255, 0]
       selector:
         color_rgb:
     
     color_24:
       name: Segment 24 Color
-      description: Color for segment 24
+      description: Segment 24 (4.6-4.8m)
       default: [0, 255, 0]
       selector:
         color_rgb:
     
     color_25:
       name: Segment 25 Color
-      description: Color for segment 25
+      description: Segment 25 (4.8-5.0m)
       default: [0, 255, 127]
       selector:
         color_rgb:
     
-    # Segments 26-30 (Meter 6) - Collapsible
+    # Segments 26-30 (Meter 6) 
     color_26:
       name: Segment 26 Color
-      description: Color for segment 26
+      description: Segment 26 (5.0-5.2m)
       default: [0, 255, 255]
       selector:
         color_rgb:
     
     color_27:
       name: Segment 27 Color
-      description: Color for segment 27
+      description: Segment 27 (5.2-5.4m)
       default: [0, 127, 255]
       selector:
         color_rgb:
     
     color_28:
       name: Segment 28 Color
-      description: Color for segment 28
+      description: Segment 28 (5.4-5.6m)
       default: [0, 0, 255]
       selector:
         color_rgb:
     
     color_29:
       name: Segment 29 Color
-      description: Color for segment 29
+      description: Segment 29 (5.6-5.8m)
       default: [127, 0, 255]
       selector:
         color_rgb:
     
     color_30:
       name: Segment 30 Color
-      description: Color for segment 30
+      description: Segment 30 (5.8-6.0m)
       default: [255, 0, 255]
       selector:
         color_rgb:
     
-    # Segments 31-35 (Meter 7) - Collapsible
+    # Segments 31-35 (Meter 7) 
     color_31:
       name: Segment 31 Color
-      description: Color for segment 31
+      description: Segment 31 (6.0-6.2m)
       default: [255, 0, 0]
       selector:
         color_rgb:
     
     color_32:
       name: Segment 32 Color
-      description: Color for segment 32
+      description: Segment 32 (6.2-6.4m)
       default: [255, 127, 0]
       selector:
         color_rgb:
     
     color_33:
       name: Segment 33 Color
-      description: Color for segment 33
+      description: Segment 33 (6.4-6.6m)
       default: [255, 255, 0]
       selector:
         color_rgb:
     
     color_34:
       name: Segment 34 Color
-      description: Color for segment 34
+      description: Segment 34 (6.6-6.8m)
       default: [0, 255, 0]
       selector:
         color_rgb:
     
     color_35:
       name: Segment 35 Color
-      description: Color for segment 35
+      description: Segment 35 (6.8-7.0m)
       default: [0, 255, 127]
       selector:
         color_rgb:
     
-    # Segments 36-40 (Meter 8) - Collapsible
+    # Segments 36-40 (Meter 8) 
     color_36:
       name: Segment 36 Color
-      description: Color for segment 36
+      description: Segment 36 (7.0-7.2m)
       default: [0, 255, 255]
       selector:
         color_rgb:
     
     color_37:
       name: Segment 37 Color
-      description: Color for segment 37
+      description: Segment 37 (7.2-7.4m)
       default: [0, 127, 255]
       selector:
         color_rgb:
     
     color_38:
       name: Segment 38 Color
-      description: Color for segment 38
+      description: Segment 38 (7.4-7.6m)
       default: [0, 0, 255]
       selector:
         color_rgb:
     
     color_39:
       name: Segment 39 Color
-      description: Color for segment 39
+      description: Segment 39 (7.6-7.8m)
       default: [127, 0, 255]
       selector:
         color_rgb:
     
     color_40:
       name: Segment 40 Color
-      description: Color for segment 40
+      description: Segment 40 (7.8-8.0m)
       default: [255, 0, 255]
       selector:
         color_rgb:
     
-    # Segments 41-45 (Meter 9) - Collapsible
+    # Segments 41-45 (Meter 9) 
     color_41:
       name: Segment 41 Color
-      description: Color for segment 41
+      description: Segment 41 (8.0-8.2m)
       default: [255, 0, 0]
       selector:
         color_rgb:
     
     color_42:
       name: Segment 42 Color
-      description: Color for segment 42
+      description: Segment 42 (8.2-8.4m)
       default: [255, 127, 0]
       selector:
         color_rgb:
     
     color_43:
       name: Segment 43 Color
-      description: Color for segment 43
+      description: Segment 43 (8.4-8.6m)
       default: [255, 255, 0]
       selector:
         color_rgb:
     
     color_44:
       name: Segment 44 Color
-      description: Color for segment 44
+      description: Segment 44 (8.6-8.8m)
       default: [0, 255, 0]
       selector:
         color_rgb:
     
     color_45:
       name: Segment 45 Color
-      description: Color for segment 45
+      description: Segment 45 (8.8-9.0m)
       default: [0, 255, 127]
       selector:
         color_rgb:
     
-    # Segments 46-50 (Meter 10) - Collapsible
+    # Segments 46-50 (Meter 10) 
     color_46:
       name: Segment 46 Color
-      description: Color for segment 46
+      description: Segment 46 (9.0-9.2m)
       default: [0, 255, 255]
       selector:
         color_rgb:
     
     color_47:
       name: Segment 47 Color
-      description: Color for segment 47
+      description: Segment 47 (9.2-9.4m)
       default: [0, 127, 255]
       selector:
         color_rgb:
     
     color_48:
       name: Segment 48 Color
-      description: Color for segment 48
+      description: Segment 48 (9.4-9.6m)
       default: [0, 0, 255]
       selector:
         color_rgb:
     
     color_49:
       name: Segment 49 Color
-      description: Color for segment 49
+      description: Segment 49 (9.6-9.8m)
       default: [127, 0, 255]
       selector:
         color_rgb:
     
     color_50:
       name: Segment 50 Color
-      description: Color for segment 50
+      description: Segment 50 (9.8-10.0m)
       default: [255, 0, 255]
       selector:
         color_rgb:
