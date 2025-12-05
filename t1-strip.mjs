@@ -438,9 +438,7 @@ const definition = {
         {
             key: ["rgb_effect_segments"],
             convertSet: async (entity, key, value, meta) => {
-                // Detect device type and determine max segments
-                const deviceType = getDeviceType(meta);
-                const maxSegments = deviceType === "t1m" ? 26 : Math.round((meta.state.length || 2) * 5);
+                const maxSegments = Math.round((meta.state.length || 2) * 5);
 
                 let segments;
                 if (!value || value.trim() === "") {
@@ -458,7 +456,7 @@ const definition = {
                     }
                 }
 
-                const mask = Buffer.from(generateSegmentMask(segments, deviceType, maxSegments));
+                const mask = Buffer.from(generateSegmentMask(segments, "strip", maxSegments));
 
                 await entity.write("manuSpecificLumi", {[0x0530]: {value: mask, type: 0x41}}, {manufacturerCode, disableDefaultResponse: false});
 
