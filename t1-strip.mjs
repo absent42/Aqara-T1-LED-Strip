@@ -157,10 +157,11 @@ const definition = {
     },
 
     extend: [
-        lumiModernExtend.lumiLight({
-            colorTemp: true,
-            color: {modes: ["xy"]},
-            colorTempRange: [153, 370],
+        m.light({
+            effect: false,
+            powerOnBehavior: false,
+            colorTemp: {startup: false, range: [153, 370]},
+            color: true,
         }),
         m.forcePowerSource({powerSource: "Mains (single phase)"}),
         lumiModernExtend.lumiPowerOnBehavior({lookup: {on: 0, previous: 1, off: 2}}),
@@ -437,9 +438,7 @@ const definition = {
         {
             key: ["rgb_effect_segments"],
             convertSet: async (entity, key, value, meta) => {
-                // Detect device type and determine max segments
-                const deviceType = getDeviceType(meta);
-                const maxSegments = deviceType === "t1m" ? 26 : Math.round((meta.state.length || 2) * 5);
+                const maxSegments = Math.round((meta.state.length || 2) * 5);
 
                 let segments;
                 if (!value || value.trim() === "") {
@@ -457,7 +456,7 @@ const definition = {
                     }
                 }
 
-                const mask = Buffer.from(generateSegmentMask(segments, deviceType, maxSegments));
+                const mask = Buffer.from(generateSegmentMask(segments, "strip", maxSegments));
 
                 await entity.write("manuSpecificLumi", {[0x0530]: {value: mask, type: 0x41}}, {manufacturerCode, disableDefaultResponse: false});
 
