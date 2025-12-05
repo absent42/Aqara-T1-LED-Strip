@@ -275,7 +275,7 @@ const definition = {
 
         // Segment activation control for dynamic effects
         exposes
-            .text("effect_segments", ea.SET)
+            .text("rgb_effect_segments", ea.SET)
             .withDescription(
                 "Comma-separated segment numbers to activate for dynamic effects (e.g., '1,2,5,8'). Leave empty or unset for all segments.",
             )
@@ -435,7 +435,7 @@ const definition = {
             },
         },
         {
-            key: ["effect_segments"],
+            key: ["rgb_effect_segments"],
             convertSet: async (entity, key, value, meta) => {
                 const maxSegments = Math.round((meta.state.length || 2) * 5);
 
@@ -459,7 +459,7 @@ const definition = {
 
                 await entity.write("manuSpecificLumi", {[0x0530]: {value: mask, type: 0x41}}, {manufacturerCode, disableDefaultResponse: false});
 
-                return {state: {effect_segments: value}};
+                return {state: {rgb_effect_segments: value}};
             },
         },
     ],
