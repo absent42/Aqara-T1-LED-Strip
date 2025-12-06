@@ -36,7 +36,6 @@ blueprint:
           domain: number
           integration: mqtt
     
-    # Segments 1-10 (Meters 1-2) - Always visible
     color_01:
       name: Segment 1 Color
       description: Segment 1 (0.0-0.2m)
@@ -107,7 +106,6 @@ blueprint:
       selector:
         color_rgb:
     
-    # Segments 11-15 (Meter 3)
     color_11:
       name: Segment 11 Color
       description: Segment 11 (2.0-2.2m)
@@ -143,7 +141,6 @@ blueprint:
       selector:
         color_rgb:
     
-    # Segments 16-20 (Meter 4) 
     color_16:
       name: Segment 16 Color
       description: Segment 16 (3.0-3.2m)
@@ -179,7 +176,6 @@ blueprint:
       selector:
         color_rgb:
     
-    # Segments 21-25 (Meter 5) 
     color_21:
       name: Segment 21 Color
       description: Segment 21 (4.0-4.2m)
@@ -215,7 +211,6 @@ blueprint:
       selector:
         color_rgb:
     
-    # Segments 26-30 (Meter 6) 
     color_26:
       name: Segment 26 Color
       description: Segment 26 (5.0-5.2m)
@@ -251,7 +246,6 @@ blueprint:
       selector:
         color_rgb:
     
-    # Segments 31-35 (Meter 7) 
     color_31:
       name: Segment 31 Color
       description: Segment 31 (6.0-6.2m)
@@ -287,7 +281,6 @@ blueprint:
       selector:
         color_rgb:
     
-    # Segments 36-40 (Meter 8) 
     color_36:
       name: Segment 36 Color
       description: Segment 36 (7.0-7.2m)
@@ -323,7 +316,6 @@ blueprint:
       selector:
         color_rgb:
     
-    # Segments 41-45 (Meter 9) 
     color_41:
       name: Segment 41 Color
       description: Segment 41 (8.0-8.2m)
@@ -359,7 +351,6 @@ blueprint:
       selector:
         color_rgb:
     
-    # Segments 46-50 (Meter 10) 
     color_46:
       name: Segment 46 Color
       description: Segment 46 (9.0-9.2m)
@@ -452,15 +443,9 @@ sequence:
       c50: !input color_50
   
   - variables:
-      # Calculate number of segments based on strip length entity
-      segment_count: "{{ (states(strip_length_entity) | float(2.0) * 5) | int }}"
-      # Array of all colors
-      all_colors: >
-        {{ [c01, c02, c03, c04, c05, c06, c07, c08, c09, c10,
-            c11, c12, c13, c14, c15, c16, c17, c18, c19, c20,
-            c21, c22, c23, c24, c25, c26, c27, c28, c29, c30,
-            c31, c32, c33, c34, c35, c36, c37, c38, c39, c40,
-            c41, c42, c43, c44, c45, c46, c47, c48, c49, c50] }}
+      # Calculate segment count from strip length
+      strip_length_meters: "{{ states(strip_length_entity) | float(2.0) }}"
+      segment_count: "{{ (strip_length_meters * 5) | int }}"
   
   - repeat:
       for_each: >
@@ -474,22 +459,22 @@ sequence:
         {% endif %}
         {% if target_lights.device_id is defined %}
           {% if target_lights.device_id is string %}
-            {% set device_entities = device_entities(target_lights.device_id) | select('match', '^light\.') | list %}
+            {% set device_entities = device_entities(target_lights.device_id) | select('match', '^light\\.') | list %}
             {% set ns.lights = ns.lights + device_entities %}
           {% else %}
             {% for device_id in target_lights.device_id %}
-              {% set device_entities = device_entities(device_id) | select('match', '^light\.') | list %}
+              {% set device_entities = device_entities(device_id) | select('match', '^light\\.') | list %}
               {% set ns.lights = ns.lights + device_entities %}
             {% endfor %}
           {% endif %}
         {% endif %}
         {% if target_lights.area_id is defined %}
           {% if target_lights.area_id is string %}
-            {% set area_entities = area_entities(target_lights.area_id) | select('match', '^light\.') | list %}
+            {% set area_entities = area_entities(target_lights.area_id) | select('match', '^light\\.') | list %}
             {% set ns.lights = ns.lights + area_entities %}
           {% else %}
             {% for area_id in target_lights.area_id %}
-              {% set area_entities = area_entities(area_id) | select('match', '^light\.') | list %}
+              {% set area_entities = area_entities(area_id) | select('match', '^light\\.') | list %}
               {% set ns.lights = ns.lights + area_entities %}
             {% endfor %}
           {% endif %}
@@ -507,11 +492,56 @@ sequence:
             payload: >
               {
                 "segment_colors": [
-                  {%- for i in range(segment_count | int) -%}
-                    {%- set color = all_colors[i] -%}
-                    {"segment": {{ i + 1 }}, "color": "#{{ '%02x%02x%02x' | format(color[0], color[1], color[2]) }}"}
-                    {%- if not loop.last -%},{%- endif -%}
-                  {%- endfor -%}
+                  {"segment": 1, "color": {"r": {{ c01[0] }}, "g": {{ c01[1] }}, "b": {{ c01[2] }}}},
+                  {"segment": 2, "color": {"r": {{ c02[0] }}, "g": {{ c02[1] }}, "b": {{ c02[2] }}}},
+                  {"segment": 3, "color": {"r": {{ c03[0] }}, "g": {{ c03[1] }}, "b": {{ c03[2] }}}},
+                  {"segment": 4, "color": {"r": {{ c04[0] }}, "g": {{ c04[1] }}, "b": {{ c04[2] }}}},
+                  {"segment": 5, "color": {"r": {{ c05[0] }}, "g": {{ c05[1] }}, "b": {{ c05[2] }}}},
+                  {"segment": 6, "color": {"r": {{ c06[0] }}, "g": {{ c06[1] }}, "b": {{ c06[2] }}}},
+                  {"segment": 7, "color": {"r": {{ c07[0] }}, "g": {{ c07[1] }}, "b": {{ c07[2] }}}},
+                  {"segment": 8, "color": {"r": {{ c08[0] }}, "g": {{ c08[1] }}, "b": {{ c08[2] }}}},
+                  {"segment": 9, "color": {"r": {{ c09[0] }}, "g": {{ c09[1] }}, "b": {{ c09[2] }}}},
+                  {"segment": 10, "color": {"r": {{ c10[0] }}, "g": {{ c10[1] }}, "b": {{ c10[2] }}}},
+                  {"segment": 11, "color": {"r": {{ c11[0] }}, "g": {{ c11[1] }}, "b": {{ c11[2] }}}},
+                  {"segment": 12, "color": {"r": {{ c12[0] }}, "g": {{ c12[1] }}, "b": {{ c12[2] }}}},
+                  {"segment": 13, "color": {"r": {{ c13[0] }}, "g": {{ c13[1] }}, "b": {{ c13[2] }}}},
+                  {"segment": 14, "color": {"r": {{ c14[0] }}, "g": {{ c14[1] }}, "b": {{ c14[2] }}}},
+                  {"segment": 15, "color": {"r": {{ c15[0] }}, "g": {{ c15[1] }}, "b": {{ c15[2] }}}},
+                  {"segment": 16, "color": {"r": {{ c16[0] }}, "g": {{ c16[1] }}, "b": {{ c16[2] }}}},
+                  {"segment": 17, "color": {"r": {{ c17[0] }}, "g": {{ c17[1] }}, "b": {{ c17[2] }}}},
+                  {"segment": 18, "color": {"r": {{ c18[0] }}, "g": {{ c18[1] }}, "b": {{ c18[2] }}}},
+                  {"segment": 19, "color": {"r": {{ c19[0] }}, "g": {{ c19[1] }}, "b": {{ c19[2] }}}},
+                  {"segment": 20, "color": {"r": {{ c20[0] }}, "g": {{ c20[1] }}, "b": {{ c20[2] }}}},
+                  {"segment": 21, "color": {"r": {{ c21[0] }}, "g": {{ c21[1] }}, "b": {{ c21[2] }}}},
+                  {"segment": 22, "color": {"r": {{ c22[0] }}, "g": {{ c22[1] }}, "b": {{ c22[2] }}}},
+                  {"segment": 23, "color": {"r": {{ c23[0] }}, "g": {{ c23[1] }}, "b": {{ c23[2] }}}},
+                  {"segment": 24, "color": {"r": {{ c24[0] }}, "g": {{ c24[1] }}, "b": {{ c24[2] }}}},
+                  {"segment": 25, "color": {"r": {{ c25[0] }}, "g": {{ c25[1] }}, "b": {{ c25[2] }}}},
+                  {"segment": 26, "color": {"r": {{ c26[0] }}, "g": {{ c26[1] }}, "b": {{ c26[2] }}}},
+                  {"segment": 27, "color": {"r": {{ c27[0] }}, "g": {{ c27[1] }}, "b": {{ c27[2] }}}},
+                  {"segment": 28, "color": {"r": {{ c28[0] }}, "g": {{ c28[1] }}, "b": {{ c28[2] }}}},
+                  {"segment": 29, "color": {"r": {{ c29[0] }}, "g": {{ c29[1] }}, "b": {{ c29[2] }}}},
+                  {"segment": 30, "color": {"r": {{ c30[0] }}, "g": {{ c30[1] }}, "b": {{ c30[2] }}}},
+                  {"segment": 31, "color": {"r": {{ c31[0] }}, "g": {{ c31[1] }}, "b": {{ c31[2] }}}},
+                  {"segment": 32, "color": {"r": {{ c32[0] }}, "g": {{ c32[1] }}, "b": {{ c32[2] }}}},
+                  {"segment": 33, "color": {"r": {{ c33[0] }}, "g": {{ c33[1] }}, "b": {{ c33[2] }}}},
+                  {"segment": 34, "color": {"r": {{ c34[0] }}, "g": {{ c34[1] }}, "b": {{ c34[2] }}}},
+                  {"segment": 35, "color": {"r": {{ c35[0] }}, "g": {{ c35[1] }}, "b": {{ c35[2] }}}},
+                  {"segment": 36, "color": {"r": {{ c36[0] }}, "g": {{ c36[1] }}, "b": {{ c36[2] }}}},
+                  {"segment": 37, "color": {"r": {{ c37[0] }}, "g": {{ c37[1] }}, "b": {{ c37[2] }}}},
+                  {"segment": 38, "color": {"r": {{ c38[0] }}, "g": {{ c38[1] }}, "b": {{ c38[2] }}}},
+                  {"segment": 39, "color": {"r": {{ c39[0] }}, "g": {{ c39[1] }}, "b": {{ c39[2] }}}},
+                  {"segment": 40, "color": {"r": {{ c40[0] }}, "g": {{ c40[1] }}, "b": {{ c40[2] }}}},
+                  {"segment": 41, "color": {"r": {{ c41[0] }}, "g": {{ c41[1] }}, "b": {{ c41[2] }}}},
+                  {"segment": 42, "color": {"r": {{ c42[0] }}, "g": {{ c42[1] }}, "b": {{ c42[2] }}}},
+                  {"segment": 43, "color": {"r": {{ c43[0] }}, "g": {{ c43[1] }}, "b": {{ c43[2] }}}},
+                  {"segment": 44, "color": {"r": {{ c44[0] }}, "g": {{ c44[1] }}, "b": {{ c44[2] }}}},
+                  {"segment": 45, "color": {"r": {{ c45[0] }}, "g": {{ c45[1] }}, "b": {{ c45[2] }}}},
+                  {"segment": 46, "color": {"r": {{ c46[0] }}, "g": {{ c46[1] }}, "b": {{ c46[2] }}}},
+                  {"segment": 47, "color": {"r": {{ c47[0] }}, "g": {{ c47[1] }}, "b": {{ c47[2] }}}},
+                  {"segment": 48, "color": {"r": {{ c48[0] }}, "g": {{ c48[1] }}, "b": {{ c48[2] }}}},
+                  {"segment": 49, "color": {"r": {{ c49[0] }}, "g": {{ c49[1] }}, "b": {{ c49[2] }}}},
+                  {"segment": 50, "color": {"r": {{ c50[0] }}, "g": {{ c50[1] }}, "b": {{ c50[2] }}}}
                 ]
               }
 
