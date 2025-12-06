@@ -28,16 +28,13 @@ blueprint:
       selector:
         text:
     
-    strip_length:
-      name: Strip Length (meters)
-      description: The length of your LED strip in meters (2-10). Only segments up to this length will be sent.
-      default: 2
+    strip_length_entity:
+      name: Strip Length Entity
+      description: The number entity showing your strip's length in meters
       selector:
-        number:
-          min: 2
-          max: 10
-          step: 0.2
-          mode: slider
+        entity:
+          domain: number
+          integration: mqtt
     
     # Segments 1-10 (Meters 1-2) - Always visible
     color_01:
@@ -402,7 +399,7 @@ sequence:
   - variables:
       z2m_base_topic: !input z2m_base_topic
       target_lights: !input target_lights
-      strip_length: !input strip_length
+      strip_length_entity: !input strip_length_entity
       c01: !input color_01
       c02: !input color_02
       c03: !input color_03
@@ -455,8 +452,8 @@ sequence:
       c50: !input color_50
   
   - variables:
-      # Calculate number of segments based on strip length
-      segment_count: "{{ (strip_length | float * 5) | int }}"
+      # Calculate number of segments based on strip length entity
+      segment_count: "{{ (states(strip_length_entity) | float(2.0) * 5) | int }}"
       # Array of all colors
       all_colors: >
         {{ [c01, c02, c03, c04, c05, c06, c07, c08, c09, c10,
