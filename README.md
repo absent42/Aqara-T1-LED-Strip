@@ -8,8 +8,6 @@ Dynamic RGB Effect patterns can be created and activated via Home Assistant havi
 *Effect Type:*
 Breathing, Rainbow1, Chasing, Flash, Hopping, Rainbow2, Flicker, Dash
 
-*Brightness:* 1% - 100%
-
 *Speed:* 1% - 100%
 
 *Colors:* Between 1 and 8 colors can be set for each effect.
@@ -48,6 +46,7 @@ Home Assistant script blueprint to control individual strip light segments.
    - **Target Lights**: Select one or more T1 LED Strip target enitities/devices, (e.g., light.my_led_strip)
    - **Zigbee2MQTT Base Topic**: Only needs to be changed if you have a non-standard Zigbee2MQTT installation
    - **Strip Length**: Select the Home Assistant entity representing the strip's length, (e.g., Length>>T1 LED Strip)
+   - **Brightness**: Set the brightness to use for the color pattern
    - **Color Pickers**: Configure each of the segment colors up to the length of the strip. 000 (black) turns off a segment
 5. Save the script
 
@@ -76,6 +75,7 @@ Home Assistant script blueprint to create color gradients evenly across the LED 
    - **Target Lights**: Select one or more T1 LED Strip target enitities/devices, (e.g., light.my_led_strip)
    - **Zigbee2MQTT Base Topic**: Only needs to be changed if you have a non-standard Zigbee2MQTT installation
    - **Strip Length**: Select the Home Assistant entity representing the strip's length, (e.g., Length>>T1 LED Strip)
+   - **Brightness**: Set the brightness to use for the color pattern
    - **Use Gradient**: If selected the colors will create a gradient between them over the strip length, if not selected solid color blocks will be created over the strip length
    - **Color Pickers**: Configure each number of colors up specified above
 5. Save the script
@@ -110,7 +110,6 @@ Home Assistant script blueprint for custom RGB ring light dynamic effects.
    - **Effect Segments**: A comma seperated list of segments to use for the effect, (e.g. 1,3,5,10)
    - **Number of colors**: Set the number of color pickers the effect pattern will use
    - **Color Pickers**: Configure the number of color pickers selected in the step above.
-   - **Effect Brightnes**: Percentage between 1 and 100
    - **Effect Speed**: Percentage between 1 and 100
 5. Save the script
 
