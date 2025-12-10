@@ -9,6 +9,7 @@ blueprint:
     Script blueprint to apply solid or gradient colors across the T1 LED Strip.
     Select 2-6 colors and the blueprint will either divide them evenly across segments
     or create smooth gradients between them. Supports multiple lights.
+  source_url: https://github.com/absent42/Aqara-T1-LED-Strip/blob/main/Home%20Assistant/aqara_t1_strip_gradient_blueprint.yaml
   domain: script
   input:
     target_lights:
