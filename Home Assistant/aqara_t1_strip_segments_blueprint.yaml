@@ -9,6 +9,7 @@ blueprint:
     Script blueprint to control individual segments on the Aqara T1 LED Strip with custom colors. 
     Each segment can be set to any color using a color picker. Set the color to black (000) to turn off a segment.
     Supports strips from 2m (10 segments) up to 10m (50 segments). Only configured segments up to strip length are sent.
+  source_url: https://github.com/absent42/Aqara-T1-LED-Strip/blob/main/Home%20Assistant/aqara_t1_strip_segments_blueprint.yaml
     Supports multiple lights.
   domain: script
   input:
