@@ -77,7 +77,7 @@ Home Assistant script blueprint to create color gradients evenly across the LED 
    - **Strip Length**: Select the Home Assistant entity representing the strip's length, (e.g., Length>>T1 LED Strip)
    - **Brightness**: Set the brightness to use for the color pattern
    - **Number of Colors**: Select the number of colors to use for the gradient
-   - **Use Gradient**: If selected the colors will create a gradient between them, if not selected solid color blocks will be over the length of the strip
+   - **Use Gradient**: If selected the colors will create a gradient between them, if not selected solid color blocks will created be over the length of the strip
    - **Color Pickers**:  Choose the colors to use 
 5. Save the script
 
