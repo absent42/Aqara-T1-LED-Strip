@@ -9,7 +9,9 @@ blueprint:
     Script blueprint to send dynamic RGB effect payloads to Aqara T1 LED Strip via
     Zigbee2MQTT, using up to 8 RGB color pickers. Supports multiple strips and
     optional segment control (5 segments per meter).
+    Effect brightness is controlled by the light's global brightness setting.
   domain: script
+  source_url: https://github.com/absent42/Aqara-T1-LED-Strip/blob/main/Home%20Assistant/aqara_t1_strip_rgb_effects_blueprint.yaml
   input:
     target_lights:
       name: Target Lights
@@ -27,8 +29,8 @@ blueprint:
       selector:
         text:
 
-    rgb_effect:
-      name: RGB Effect
+    effect:
+      name: Effect
       description: Select the dynamic effect to use
       default: "breathing"
       selector:
@@ -43,7 +45,7 @@ blueprint:
             - "flicker"
             - "dash"
 
-    rgb_effect_segments:
+    effect_segments:
       name: Effect Segments
       description: >
         Comma-separated segment numbers (e.g., "1,2,5,8").
@@ -118,18 +120,7 @@ blueprint:
       selector:
         color_rgb:
 
-    rgb_effect_brightness:
-      name: Effect Brightness
-      description: Brightness of the RGB dynamic effect (1-100%)
-      default: 100
-      selector:
-        number:
-          min: 1
-          max: 100
-          unit_of_measurement: "%"
-          mode: slider
-
-    rgb_effect_speed:
+    effect_speed:
       name: Effect Speed
       description: Speed of the RGB dynamic effect (1-100%)
       default: 50
@@ -144,11 +135,10 @@ sequence:
   - variables:
       z2m_base_topic: !input z2m_base_topic
       target_lights: !input target_lights
-      rgb_effect: !input rgb_effect
-      rgb_effect_segments: !input rgb_effect_segments
+      effect: !input effect
+      effect_segments: !input effect_segments
       number_of_colors: !input number_of_colors
-      rgb_effect_brightness: !input rgb_effect_brightness
-      rgb_effect_speed: !input rgb_effect_speed
+      effect_speed: !input effect_speed
       color_01: !input color_01
       color_02: !input color_02
       color_03: !input color_03
@@ -212,20 +202,20 @@ sequence:
         
         - if:
             - condition: template
-              value_template: "{{ rgb_effect_segments != '' }}"
+              value_template: "{{ effect_segments != '' }}"
           then:
             # T1 Strip with segment specification
-            - alias: "Set T1 Strip effect with segments (correct parameter order)"
+            - alias: "Set T1 Strip effect with segments"
               service: mqtt.publish
               data:
                 topic: "{{ z2m_base_topic }}/{{ z2m_device_name }}/set"
-                payload: '{"rgb_effect":"{{ rgb_effect }}","rgb_effect_speed":{{ rgb_effect_speed }},"rgb_effect_colors":{{ color_array }},"rgb_effect_brightness":{{ rgb_effect_brightness }},"rgb_effect_segments":"{{ rgb_effect_segments }}"}'
+                payload: '{"effect":"{{ effect }}","effect_speed":{{ effect_speed }},"effect_colors":{{ color_array }},"effect_segments":"{{ effect_segments }}"}'
           else:
             # T1 Strip without segment specification (all segments)
-            - alias: "Set T1 Strip effect all segments (correct parameter order)"
+            - alias: "Set T1 Strip effect all segments"
               service: mqtt.publish
               data:
                 topic: "{{ z2m_base_topic }}/{{ z2m_device_name }}/set"
-                payload: '{"rgb_effect":"{{ rgb_effect }}","rgb_effect_speed":{{ rgb_effect_speed }},"rgb_effect_colors":{{ color_array }},"rgb_effect_brightness":{{ rgb_effect_brightness }}}'
+                payload: '{"effect":"{{ effect }}","effect_speed":{{ effect_speed }},"effect_colors":{{ color_array }}}'
 
 mode: single
