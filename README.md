@@ -76,8 +76,9 @@ Home Assistant script blueprint to create color gradients evenly across the LED 
    - **Zigbee2MQTT Base Topic**: Only needs to be changed if you have a non-standard Zigbee2MQTT installation
    - **Strip Length**: Select the Home Assistant entity representing the strip's length, (e.g., Length>>T1 LED Strip)
    - **Brightness**: Set the brightness to use for the color pattern
-   - **Use Gradient**: If selected the colors will create a gradient between them over the strip length, if not selected solid color blocks will be created over the strip length
-   - **Color Pickers**: Configure each number of colors up specified above
+   - **Number of Colors**: Select the number of colors to use for the gradient
+   - **Use Gradient**: If selected the colors will create a gradient between them, if not selected solid color blocks will be over the length of the strip
+   - **Color Pickers**:  Choose the colors to use 
 5. Save the script
 
 #### 3. Running a created script
