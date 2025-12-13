@@ -332,12 +332,9 @@ const definition = {
                     {manufacturerCode, disableDefaultResponse: false},
                 );
 
-                const stateKey = deviceType === "t1m" ? "state_rgb" : "state";
-
                 return {
                     state: {
                         effect_colors: colors,
-                        [stateKey]: "ON",
                     },
                 };
             },
