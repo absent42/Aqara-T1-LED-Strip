@@ -353,7 +353,14 @@ const definition = {
         await endpoint.read("manuSpecificLumi", [0x0516], {manufacturerCode: manufacturerCode});
         await endpoint.read("manuSpecificLumi", [0x0517], {manufacturerCode: manufacturerCode});
         await endpoint.read("manuSpecificLumi", [0x051b], {manufacturerCode: manufacturerCode});
+        await endpoint.read("manuSpecificLumi", [0x051c], {manufacturerCode: manufacturerCode});
+        await endpoint.read("manuSpecificLumi", [0x051d], {manufacturerCode: manufacturerCode});
         await endpoint.read("manuSpecificLumi", [0x051e], {manufacturerCode: manufacturerCode});
+        await endpoint.read("manuSpecificLumi", [0x051f], {manufacturerCode: manufacturerCode});
+        await endpoint.read("manuSpecificLumi", [0x0520], {manufacturerCode: manufacturerCode});
+        await endpoint.read("manuSpecificLumi", [0x0523], {manufacturerCode: manufacturerCode});
+        await endpoint.read("manuSpecificLumi", [0x0527], {manufacturerCode: manufacturerCode});
+        await endpoint.read("manuSpecificLumi", [0x0530], {manufacturerCode: manufacturerCode});
         await endpoint.read("genLevelCtrl", [0x0012], {});
         await endpoint.read("genLevelCtrl", [0x0013], {});
     },
