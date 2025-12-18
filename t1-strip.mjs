@@ -60,6 +60,35 @@ function encodeColor(color) {
 }
 
 // ============================================================================
+// SHARED MODERN EXTENDS (identical across T1M, T1 Strip, T2)
+// ============================================================================
+
+function lumiEffect(lookup) {
+    return m.enumLookup({
+        name: "effect",
+        lookup: lookup,
+        cluster: "manuSpecificLumi",
+        attribute: {ID: 0x051f, type: 0x23},
+        description: "RGB dynamic effect type",
+        zigbeeCommandOptions: {manufacturerCode},
+    });
+}
+
+function lumiEffectSpeed() {
+    return m.numeric({
+        name: "effect_speed",
+        cluster: "manuSpecificLumi",
+        attribute: {ID: 0x0520, type: 0x20},
+        description: "RGB dynamic effect speed (1-100%)",
+        zigbeeCommandOptions: {manufacturerCode},
+        unit: "%",
+        valueMin: 1,
+        valueMax: 100,
+        valueStep: 1,
+    });
+}
+
+// ============================================================================
 // UNIFIED SEGMENT CONTROL HELPERS (T1M and T1 Strip)
 // ============================================================================
 
@@ -385,27 +414,8 @@ const definition = {
             zigbeeCommandOptions: {manufacturerCode},
         }),
 
-        m.enumLookup({
-            name: "effect",
-            lookup: {breathing: 0, rainbow1: 1, chasing: 2, flash: 3, hopping: 4, rainbow2: 5, flicker: 6, dash: 7},
-            cluster: "manuSpecificLumi",
-            attribute: {ID: 0x051f, type: 0x23},
-            description: "RGB dynamic effect type for LED strip",
-            zigbeeCommandOptions: {manufacturerCode},
-        }),
-
-        m.numeric({
-            name: "effect_speed",
-            cluster: "manuSpecificLumi",
-            attribute: {ID: 0x0520, type: 0x20},
-            description: "RGB dynamic effect speed (1-100%)",
-            zigbeeCommandOptions: {manufacturerCode},
-            unit: "%",
-            valueMin: 1,
-            valueMax: 100,
-            valueStep: 1,
-        }),
-
+        lumiEffect({breathing: 0, rainbow1: 1, chasing: 2, flash: 3, hopping: 4, rainbow2: 5, flicker: 6, dash: 7}),
+        lumiEffectSpeed(),
         lumiSegmentColors(),
         lumiEffectSegments(),
         lumiEffectColors(),
