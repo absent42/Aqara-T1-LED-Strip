@@ -9,7 +9,7 @@ const ea = exposes.access;
 // SHARED COLOR CONVERSION FUNCTIONS (identical across T1M, T1 Strip, T2)
 // ============================================================================
 
-function rgbToXY(r, g, b) {
+function lumiRgbToXY(r, g, b) {
     let red = r / 255.0;
     let green = g / 255.0;
     let blue = b / 255.0;
@@ -33,7 +33,7 @@ function rgbToXY(r, g, b) {
     };
 }
 
-function encodeColor(color) {
+function lumiEncodeRgbColor(color) {
     if (typeof color !== 'object' || color.r === undefined || color.g === undefined || color.b === undefined) {
         throw new Error(`Invalid color format. Expected {r: 0-255, g: 0-255, b: 0-255}, got: ${JSON.stringify(color)}`);
     }
@@ -46,7 +46,7 @@ function encodeColor(color) {
         throw new Error(`RGB values must be between 0-255. Got r:${r}, g:${g}, b:${b}`);
     }
 
-    const xy = rgbToXY(r, g, b);
+    const xy = lumiRgbToXY(r, g, b);
 
     const xScaled = Math.round(xy.x * 65535);
     const yScaled = Math.round(xy.y * 65535);
@@ -92,7 +92,7 @@ function lumiEffectSpeed() {
 // UNIFIED SEGMENT CONTROL HELPERS (T1M and T1 Strip)
 // ============================================================================
 
-function generateSegmentMask(segments, deviceType, maxSegments) {
+function lumiGenerateSegmentMask(segments, deviceType, maxSegments) {
     const maskSize = deviceType === "t1m" ? 4 : 8;
     const mask = new Array(maskSize).fill(0);
 
@@ -111,15 +111,15 @@ function generateSegmentMask(segments, deviceType, maxSegments) {
     return mask;
 }
 
-function buildSegmentPacket(segments, color, deviceType, maxSegments, brightness = 254) {
-    const segmentMask = generateSegmentMask(segments, deviceType, maxSegments);
-    const colorBytes = encodeColor(color);
+function lumiBuildSegmentPacket(segments, color, deviceType, maxSegments, brightness = 254) {
+    const segmentMask = lumiGenerateSegmentMask(segments, deviceType, maxSegments);
+    const colorBytes = lumiEncodeRgbColor(color);
 
     if (deviceType === "t1m") {
         return [...segmentMask, 0x00, 0x00, 0x00, 0x00, ...colorBytes];
     }
 
-    const brightnessByte = Math.max(0, Math.min(255, Math.round(brightness)));
+    const brightnessByte = Math.max(0, Math.min(254, Math.round(brightness)));
     return [0x01, 0x01, 0x01, 0x0f, brightnessByte, ...segmentMask, ...colorBytes, 0x00, 0x14];
 }
 
@@ -142,7 +142,7 @@ function lumiEffectColors() {
 
                     const colorBytes = [];
                     for (const color of colors) {
-                        const encoded = encodeColor(color);
+                        const encoded = lumiEncodeRgbColor(color);
                         colorBytes.push(...encoded);
                     }
 
@@ -174,8 +174,6 @@ function lumiEffectColors() {
                 .withLengthMax(8)
                 .withCategory("config"),
         ],
-        fromZigbee: [],
-        meta: {},
     };
 }
 
@@ -203,12 +201,12 @@ function lumiSegmentColors() {
                     } else if (model === "lumi.light.acn032") {
                         maxSegments = 26;
                     } else if (model === "lumi.light.acn132") {
-                        maxSegments = Math.round((meta.state.length || 2) * 5);
+                        maxSegments = Math.round((meta.state.length !== undefined ? Number(meta.state.length) : 2) * 5);
                     } else {
                         maxSegments = 26;
                     }
                     
-                    const brightness = meta.state.brightness ?? 254;
+                    const brightness = meta.state && meta.state.brightness !== undefined ? Number(meta.state.brightness) : 254;
 
                     const colorGroups = {};
 
@@ -217,7 +215,7 @@ function lumiSegmentColors() {
                             throw new Error(`Each segment must have "segment" (1-${maxSegments}) and "color" {r, g, b} fields`);
                         }
 
-                        const segment = item.segment;
+                        const segment = Number(item.segment);
                         const color = item.color;
 
                         if (segment < 1 || segment > maxSegments) {
@@ -244,7 +242,7 @@ function lumiSegmentColors() {
 
                     for (let i = 0; i < groups.length; i++) {
                         const group = groups[i];
-                        const packet = buildSegmentPacket(group.segments, group.color, deviceType, maxSegments, brightness);
+                        const packet = lumiBuildSegmentPacket(group.segments, group.color, deviceType, maxSegments, brightness);
 
                         await entity.write(
                             "manuSpecificLumi",
@@ -257,9 +255,11 @@ function lumiSegmentColors() {
                         }
                     }
 
-                    const stateKey = deviceType === "t1m" ? "state_rgb" : "state";
-
-                    return {state: {segment_colors: value, [stateKey]: "ON"}};
+                    if (deviceType === "strip") {
+                        return {state: {segment_colors: value, state: "ON"}};
+                    } else {
+                        return {state: {segment_colors: value}};
+                    }
                 },
             },
         ],
@@ -283,8 +283,6 @@ function lumiSegmentColors() {
                 .withDescription("Set individual segment colors.")
                 .withCategory("config"),
         ],
-        fromZigbee: [],
-        meta: {},
     };
 }
 
@@ -299,7 +297,7 @@ function lumiEffectSegments() {
             {
                 key: ["effect_segments"],
                 convertSet: async (entity, key, value, meta) => {
-                    const maxSegments = Math.round((meta.state.length || 2) * 5);
+                    const maxSegments = Math.round((meta.state.length !== undefined ? Number(meta.state.length) : 2) * 5);
 
                     let segments;
                     if (!value || value.trim() === "") {
@@ -321,7 +319,7 @@ function lumiEffectSegments() {
                         }
                     }
 
-                    const mask = Buffer.from(generateSegmentMask(segments, "strip", maxSegments));
+                    const mask = Buffer.from(lumiGenerateSegmentMask(segments, "strip", maxSegments));
 
                     await entity.write("manuSpecificLumi", {1328: {value: mask, type: 0x41}}, {manufacturerCode, disableDefaultResponse: false});
 
@@ -335,8 +333,6 @@ function lumiEffectSegments() {
                 .withDescription("Comma-separated segment numbers for effects (e.g., '1,2,5,8'). Leave empty or unset for all segments.")
                 .withCategory("config"),
         ],
-        fromZigbee: [],
-        meta: {},
     };
 }
 
@@ -373,6 +369,7 @@ const definition = {
         }),
         m.forcePowerSource({powerSource: "Mains (single phase)"}),
         lumiModernExtend.lumiPowerOnBehavior({lookup: {on: 0, previous: 1, off: 2}}),
+        m.identify(),        
         lumiModernExtend.lumiZigbeeOTA(),
 
         lumiModernExtend.lumiDimmingRangeMin(),
@@ -423,9 +420,9 @@ const definition = {
 
         lumiEffect({breathing: 0, rainbow1: 1, chasing: 2, flash: 3, hopping: 4, rainbow2: 5, flicker: 6, dash: 7}),
         lumiEffectSpeed(),
-        lumiSegmentColors(),
-        lumiEffectSegments(),
         lumiEffectColors(),
+        lumiEffectSegments(),
+        lumiSegmentColors(),
     ],
 };
 
