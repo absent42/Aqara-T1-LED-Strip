@@ -12,7 +12,16 @@ Breathing, Rainbow1, Chasing, Flash, Hopping, Rainbow2, Flicker, Dash
 
 *Colors:* Between 1 and 8 colors can be set for each effect.
 
-*Effect segments:* The segments of the strip the dynamic effects are active in
+*Effect segments:* The segments of the strip the dynamic effects are active in. Also supports segment patterns:
+
+Supported formats:
+ - Empty/"all" → all segments
+ - Comma-separated: "1,2,5,8"
+ - Ranges: "1-10", "5-15"
+ - Multiple ranges: "1-5,10-15,20-25"
+ - Mixed: "1,3,5-8,10,15-20"
+ - Patterns: "odd", "even", "first-half", "last-half", "first-third" etc
+ - Pattern combinations: "odd,20-25"
 
 ## Installation
 
