@@ -19,8 +19,8 @@ function lumiRgbToXY(r, g, b) {
     blue = blue > 0.04045 ? ((blue + 0.055) / 1.055) ** 2.4 : blue / 12.92;
 
     const X = red * 0.4124564 + green * 0.3575761 + blue * 0.1804375;
-    const Y = red * 0.2126729 + green * 0.7151522 + blue * 0.0721750;
-    const Z = red * 0.0193339 + green * 0.1191920 + blue * 0.9503041;
+    const Y = red * 0.2126729 + green * 0.7151522 + blue * 0.072175;
+    const Z = red * 0.0193339 + green * 0.119192 + blue * 0.9503041;
 
     const sum = X + Y + Z;
     if (sum === 0) {
@@ -34,7 +34,7 @@ function lumiRgbToXY(r, g, b) {
 }
 
 function lumiEncodeRgbColor(color) {
-    if (typeof color !== 'object' || color.r === undefined || color.g === undefined || color.b === undefined) {
+    if (typeof color !== "object" || color.r === undefined || color.g === undefined || color.b === undefined) {
         throw new Error(`Invalid color format. Expected {r: 0-255, g: 0-255, b: 0-255}, got: ${JSON.stringify(color)}`);
     }
 
@@ -51,12 +51,7 @@ function lumiEncodeRgbColor(color) {
     const xScaled = Math.round(xy.x * 65535);
     const yScaled = Math.round(xy.y * 65535);
 
-    return [
-        (xScaled >>> 8) & 0xff,
-        xScaled & 0xff,
-        (yScaled >>> 8) & 0xff,
-        yScaled & 0xff,
-    ];
+    return [(xScaled >>> 8) & 0xff, xScaled & 0xff, (yScaled >>> 8) & 0xff, yScaled & 0xff];
 }
 
 // ============================================================================
@@ -134,7 +129,12 @@ function lumiEffectColors() {
             {
                 key: ["effect_colors"],
                 convertSet: async (entity, key, value, meta) => {
-                    const colors = value || meta.state.effect_colors || [{r: 255, g: 0, b: 0}, {r: 0, g: 255, b: 0}, {r: 0, g: 0, b: 255}];
+                    const colors = value ||
+                        meta.state.effect_colors || [
+                            {r: 255, g: 0, b: 0},
+                            {r: 0, g: 255, b: 0},
+                            {r: 0, g: 0, b: 255},
+                        ];
 
                     if (!Array.isArray(colors) || colors.length < 1 || colors.length > 8) {
                         throw new Error("Must provide array of 1-8 RGB color objects");
@@ -165,10 +165,15 @@ function lumiEffectColors() {
         ],
         exposes: [
             exposes
-                .list("effect_colors", ea.SET, exposes.composite("color", "color", ea.SET)
-                    .withFeature(exposes.numeric("r", ea.SET).withValueMin(0).withValueMax(255).withDescription("Red (0-255)"))
-                    .withFeature(exposes.numeric("g", ea.SET).withValueMin(0).withValueMax(255).withDescription("Green (0-255)"))
-                    .withFeature(exposes.numeric("b", ea.SET).withValueMin(0).withValueMax(255).withDescription("Blue (0-255)")))
+                .list(
+                    "effect_colors",
+                    ea.SET,
+                    exposes
+                        .composite("color", "color", ea.SET)
+                        .withFeature(exposes.numeric("r", ea.SET).withValueMin(0).withValueMax(255).withDescription("Red (0-255)"))
+                        .withFeature(exposes.numeric("g", ea.SET).withValueMin(0).withValueMax(255).withDescription("Green (0-255)"))
+                        .withFeature(exposes.numeric("b", ea.SET).withValueMin(0).withValueMax(255).withDescription("Blue (0-255)")),
+                )
                 .withDescription("Array of RGB color objects for dynamic effects (1-8 colors).")
                 .withLengthMin(1)
                 .withLengthMax(8)
@@ -194,7 +199,7 @@ function lumiSegmentColors() {
 
                     const model = meta.device.modelID;
                     const deviceType = model === "lumi.light.acn132" ? "strip" : "t1m";
-                    
+
                     let maxSegments;
                     if (model === "lumi.light.acn031") {
                         maxSegments = 20;
@@ -205,7 +210,7 @@ function lumiSegmentColors() {
                     } else {
                         maxSegments = 26;
                     }
-                    
+
                     const brightness = meta.state && meta.state.brightness !== undefined ? Number(meta.state.brightness) : 254;
 
                     const colorGroups = {};
@@ -222,7 +227,7 @@ function lumiSegmentColors() {
                             throw new Error(`Invalid segment: ${segment}. Must be 1-${maxSegments}`);
                         }
 
-                        if (typeof color !== 'object' || color.r === undefined || color.g === undefined || color.b === undefined) {
+                        if (typeof color !== "object" || color.r === undefined || color.g === undefined || color.b === undefined) {
                             throw new Error(`Invalid color for segment ${segment}. Expected {r, g, b}`);
                         }
 
@@ -296,7 +301,7 @@ function lumiSegmentColors() {
  * - Ranges: "1-10", "5-15"
  * - Multiple ranges: "1-5,10-15,20-25"
  * - Mixed: "1,3,5-8,10,15-20"
- * - Patterns: "odd", "even", "first-half", "last-half", "frist-third" etc.
+ * - Patterns: "odd", "even", "first-half", "last-half", etc.
  * - Pattern combinations: "odd,20-25"
  */
 function lumiSegmentParsePattern(value, maxSegments) {
@@ -310,7 +315,10 @@ function lumiSegmentParsePattern(value, maxSegments) {
     }
 
     const segments = new Set();
-    const parts = trimmed.split(",").map((p) => p.trim()).filter((p) => p.length > 0);
+    const parts = trimmed
+        .split(",")
+        .map((p) => p.trim())
+        .filter((p) => p.length > 0);
 
     if (parts.length === 0) {
         return Array.from({length: maxSegments}, (_, i) => i + 1);
@@ -459,9 +467,9 @@ function lumiEffectSegments() {
                 .text("effect_segments", ea.SET)
                 .withDescription(
                     "Segment selection for effects. Formats: '1,2,5' (list), '1-10' (range), " +
-                    "'1-5,10-15' (multiple ranges), '1,3,5-8,10' (mixed), " +
-                    "'odd/even/first-half/last-half/first-third/middle-third/last-third' (patterns). " +
-                    "Empty = all segments. Each meter = 5 segments (20cm each).",
+                        "'1-5,10-15' (multiple ranges), '1,3,5-8,10' (mixed), " +
+                        "'odd/even/first-half/last-half/first-third/middle-third/last-third' (patterns). " +
+                        "Empty = all segments. Each meter = 5 segments (20cm each).",
                 )
                 .withCategory("config"),
         ],
@@ -528,16 +536,16 @@ const definition = {
             valueOff: ["OFF", 0],
             cluster: "manuSpecificLumi",
             attribute: {ID: 0x051c, type: 0x20},
-            description: "Enabling audio",
+            description: "Audio sync mode",
             zigbeeCommandOptions: {manufacturerCode},
         }),
 
         m.enumLookup({
             name: "audio_sensitivity",
-            lookup: {low: 0, medium: 1, high: 2},
+            lookup: {low: 0, high: 2},
             cluster: "manuSpecificLumi",
             attribute: {ID: 0x051e, type: 0x20},
-            description: "Audio sensitivity",
+            description: "Audio sync sensitivity",
             zigbeeCommandOptions: {manufacturerCode},
         }),
 
