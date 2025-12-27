@@ -25,6 +25,8 @@ Supported formats:
 
 ## Installation
 
+*This converter will be included in Zigbee2MQTT 2.7.2 and no longer needed to be installed separately after that release*
+
 *Requires Zigbee2MQTT 2.7.0 or above*
 
 In Zigbee2MQTT go to **settings** → **dev console** → **external converters**, create a new converter named **t1-strip.mjs** and paste in the contents of the file. Click save then restart Zigbee2MQTT via **settings** → **tools**
