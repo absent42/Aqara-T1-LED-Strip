@@ -36,6 +36,9 @@ Alternatively place the file **t1-strip.mjs** in the folder **zigbee2mqtt/data/e
 If an external converter is active for a device a cyan icon with "Supported: external" will be displayed under the device name in Zigbee2MQTT.
 
 ## Home Assistant
+
+**Use the  Aqara Advanced Lighting HACS integration to setup automations etc through actions https://github.com/absent42/Aqara-Advanced-Lighting**
+
 The Home Assistant folder contains a collection of blueprints, scripts, cards and examples to control the T1 LED Strip light with color segmentations and dynamic effects.
 
 ## Segment Color Patterns
