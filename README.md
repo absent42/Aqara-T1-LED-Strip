@@ -39,8 +39,6 @@ If an external converter is active for a device a cyan icon with "Supported: ext
 
 **Use the Aqara Advanced Lighting Home Assistant integration to make custom effects, segment patterns and sequences, triggers, and utilise them in automations - https://github.com/absent42/Aqara-Advanced-Lighting**
 
-The Home Assistant folder contains a collection of blueprints, scripts, cards and examples to control the T1 LED Strip light with color segmentations and dynamic effects.
-
 ## Segment Color Patterns
 ### aqara_t1_strip_segments_blueprint.yaml
 Home Assistant script blueprint to control individual strip light segments.
